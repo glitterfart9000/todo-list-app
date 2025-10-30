@@ -29,6 +29,7 @@ body {
     border-radius: 15px;
     padding: 50px 20px;
     flex-grow: 1;
+    overflow-y: scroll;
 }
 
 .form {
