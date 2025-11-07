@@ -5,32 +5,53 @@ function addTask(event) {
     let textbox = document.getElementById("task-input");
     let task = textbox.value;
 
-    createTaskDiv(task);
+    // clear text box
+    textbox.value = "";
+
+    // check for empty task text
+    if (task == "") {
+        alert("Enter a task");
+        return;
+    }
+
+    let idNum = generateIdNum();
+
+    createTaskDiv(task, idNum);
 
     // save task to local storage
-    localStorage.setItem(taskDiv.id, task);
+    localStorage.setItem("task" + idNum, task);
 
 }
 
-function createTaskDiv(task) {
+function generateIdNum() {
+    // iterate through local storage
+    // check for first available id number
+    let idNum = 0;
+    while (localStorage.getItem("task" + idNum) != null) {
+        idNum++;
+    }
+    return idNum;
+}
+
+function createTaskDiv(task, idNum) {
     // create a list item
     // get todo-list container div
     let todoList = document.getElementById("todo-list");
 
     // create list-item div
     let taskDiv = document.createElement("div");
-    taskDiv.id = "task" + todoList.childElementCount;
+    taskDiv.id = "task" + idNum;
     taskDiv.classList.add("list-item");
 
     // create checkbox
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.id = "checkbox" + todoList.childElementCount;
+    checkbox.id = "checkbox" + idNum;
     checkbox.addEventListener("change", removeTask);
 
     // create label
     let label = document.createElement("label");
-    label.id = "label" + todoList.childElementCount;
+    label.id = "label" + idNum;
     label.innerText = task;
 
     // append checkbox to list-item div
@@ -59,6 +80,7 @@ function removeTask(event) {
     // remove the task div from layout
     setTimeout(function() {
         taskDiv.remove();
+        localStorage.removeItem(taskDiv.id);
     }, 1000);
 }
 
@@ -69,9 +91,9 @@ function loadTasks() {
         let key = localStorage.key(i);
         let task = localStorage.getItem(key);
         console.log(task);
+        // create task divs for each task
+        createTaskDiv(task, key.substring(4));
     }
-
-    // create task divs for each task
 }
 
 loadTasks();
